@@ -258,7 +258,7 @@ describe("CardService", () => {
       expect(deck2Cards).toHaveLength(1);
       expect(deck1Cards.map((c) => c.id)).toContain(card1.id);
       expect(deck1Cards.map((c) => c.id)).toContain(card2.id);
-      expect(deck2Cards[0].id).toBe(card3.id);
+      expect(deck2Cards[0]?.id).toBe(card3.id);
     });
 
     it("returns empty array for unknown deck", async () => {
