@@ -1,0 +1,9 @@
+{
+  "version": 1,
+  "rules": {
+    "all": true
+  },
+  "format": {
+    "enabled": true
+  }
+}
