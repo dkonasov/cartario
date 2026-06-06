@@ -10,7 +10,8 @@ import type { Deck } from "@domain/models/deck";
 @customElement("deck-card")
 export class DeckCard extends LitElement {
   @property({ type: Object }) deck?: Deck;
-  @consume({ context: cardServiceContext, subscribe: true }) private cardService?: CardService;
+  @consume({ context: cardServiceContext, subscribe: true })
+  private cardService?: CardService;
   @consume({ context: studyServiceContext, subscribe: true })
   private studyService?: StudyService;
 

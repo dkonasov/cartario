@@ -104,10 +104,7 @@ export class FlashcardView extends LitElement {
           <div class="flashcard-label">${label}</div>
           <div class="flashcard-content">${content}</div>
           ${!this.revealed
-            ? html`<button
-                class="show-answer-button"
-                @click=${this.handleReveal}
-              >
+            ? html`<button class="show-answer-button" @click=${this.handleReveal}>
                 Show Answer
               </button>`
             : html``}

@@ -1,5 +1,5 @@
 import { html, LitElement } from "lit";
-import { customElement, property, state } from "lit/decorators.js";
+import { customElement, state } from "lit/decorators.js";
 import { consume } from "@lit/context";
 import { css } from "lit";
 import type { DeckService } from "@application/deck-service";
@@ -9,7 +9,8 @@ import "@ui/components/deck-card";
 
 @customElement("deck-list-page")
 export class DeckListPage extends LitElement {
-  @consume({ context: deckServiceContext, subscribe: true }) private deckService?: DeckService;
+  @consume({ context: deckServiceContext, subscribe: true })
+  private deckService?: DeckService;
 
   @state() private allDecks: Deck[] = [];
   @state() private searchQuery: string = "";

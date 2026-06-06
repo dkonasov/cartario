@@ -118,7 +118,7 @@ showing due counts, and controlling session length (shuffle / limit).
 
 7. [x] Add a study route to `router.ts` and import `<study-session-page>`.
        — Parse `/decks/:id/study` → `{ path: "/decks/:id/study",
-       params: { id } }` (place the match before the `/decks/:id` match).
+params: { id } }` (place the match before the `/decks/:id` match).
        — Case `/decks/:id/study` →
        `<study-session-page .deckId=${route.params.id}></study-session-page>`.
 

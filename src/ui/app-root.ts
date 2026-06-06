@@ -1,4 +1,4 @@
-import { html, LitElement } from "lit";
+import { css, html, LitElement } from "lit";
 import { customElement } from "lit/decorators.js";
 import { ContextProvider } from "@lit/context";
 import type { DeckService } from "@application/deck-service";
@@ -6,6 +6,7 @@ import type { CardService } from "@application/card-service";
 import type { StudyService } from "@application/study-service";
 import { deckServiceContext, cardServiceContext, studyServiceContext } from "@ui/context";
 import { router } from "@ui/router";
+import "@ui/components/toolbar";
 
 interface AppDeps {
   deckService: DeckService;
@@ -23,8 +24,20 @@ export function createAppRoot(deps: AppDeps) {
 
 @customElement("app-root")
 export class AppRoot extends LitElement {
-  private readonly deckServiceProvider = new ContextProvider(this, { context: deckServiceContext });
-  private readonly cardServiceProvider = new ContextProvider(this, { context: cardServiceContext });
+  static styles = css`
+    header {
+      margin: 0px auto;
+      max-width: 1200px;
+      padding: 24px;
+    }
+  `;
+
+  private readonly deckServiceProvider = new ContextProvider(this, {
+    context: deckServiceContext,
+  });
+  private readonly cardServiceProvider = new ContextProvider(this, {
+    context: cardServiceContext,
+  });
   private readonly studyServiceProvider = new ContextProvider(this, {
     context: studyServiceContext,
   });
@@ -58,6 +71,9 @@ export class AppRoot extends LitElement {
 
   render() {
     if (!this.ready) return html``;
-    return html`${router()}`;
+    return html`
+      <header><cartario-toolbar></cartario-toolbar></header>
+      <main>${router()}</main>
+    `;
   }
 }

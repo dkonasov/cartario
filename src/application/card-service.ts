@@ -28,10 +28,21 @@ export class CardService {
     return card;
   }
 
-  async update(id: string, input: { front: string; back: string; now: number }): Promise<Card> {
+  async update(
+    id: string,
+    input: { front: string; back: string; now: number; due?: number },
+  ): Promise<Card> {
     const existing = await this.cards.getById(id);
     if (!existing) throw new Error("Card not found");
-    const next: Card = { ...existing, front: input.front, back: input.back, updatedAt: input.now };
+    const next: Card = {
+      ...existing,
+      front: input.front,
+      back: input.back,
+      updatedAt: input.now,
+    };
+    if (input.due !== undefined) {
+      next.due = input.due;
+    }
     await this.cards.save(next);
     return next;
   }

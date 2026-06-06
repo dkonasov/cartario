@@ -8,12 +8,16 @@ import type { StudyService } from "@application/study-service";
 import { deckServiceContext, cardServiceContext, studyServiceContext } from "@ui/context";
 import type { Deck } from "@domain/models/deck";
 import type { Card } from "@domain/models/card";
+import { SignalWatcher } from "@lit-labs/signals";
+import { isInGodMod } from "../../state/god-mod";
 
 @customElement("deck-detail-page")
-export class DeckDetailPage extends LitElement {
+export class DeckDetailPage extends SignalWatcher(LitElement) {
   @property() deckId?: string;
-  @consume({ context: deckServiceContext, subscribe: true }) private deckService?: DeckService;
-  @consume({ context: cardServiceContext, subscribe: true }) private cardService?: CardService;
+  @consume({ context: deckServiceContext, subscribe: true })
+  private deckService?: DeckService;
+  @consume({ context: cardServiceContext, subscribe: true })
+  private cardService?: CardService;
   @consume({ context: studyServiceContext, subscribe: true })
   private studyService?: StudyService;
 
@@ -106,6 +110,25 @@ export class DeckDetailPage extends LitElement {
     // Refresh cards list
     if (this.deckId) {
       this.cards = await this.cardService.listByDeck(this.deckId);
+    }
+  }
+
+  private async handleResetDue(card: Card): Promise<void> {
+    if (!this.cardService) return;
+
+    await this.cardService.update(card.id, {
+      front: card.front,
+      back: card.back,
+      now: Date.now(),
+      due: Date.now(),
+    });
+
+    if (this.deckId && this.studyService) {
+      void this.cardService.listByDeck(this.deckId).then((cards) => {
+        this.cards = cards;
+      });
+
+      this.dueCount = await this.studyService.countDue(this.deckId);
     }
   }
 
@@ -376,6 +399,12 @@ export class DeckDetailPage extends LitElement {
                       <div class="card-content">
                         <div class="card-front">${card.front}</div>
                         <div class="card-back">${card.back}</div>
+                        ${isInGodMod.get()
+                          ? html`<div class="godmod-controls">
+                              <small>Due: ${new Date(card.due).toLocaleDateString()}</small>
+                              <button @click=${() => this.handleResetDue(card)}>Reset due</button>
+                            </div>`
+                          : ""}
                       </div>
                       <div class="card-actions">
                         <button @click=${() => this.handleEditCard(card.id)}>Edit</button>
