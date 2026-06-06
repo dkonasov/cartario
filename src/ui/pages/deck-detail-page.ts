@@ -182,8 +182,6 @@ export class DeckDetailPage extends SignalWatcher(LitElement) {
     .due-count {
       font-size: 14px;
       color: #666;
-      padding: 0 12px;
-      border-right: 1px solid #ddd;
     }
 
     button {
@@ -361,12 +359,14 @@ export class DeckDetailPage extends SignalWatcher(LitElement) {
       <div class="header">
         <div class="header-left">
           <button class="back-button" @click=${this.handleBack}>←</button>
-          <h1>${this.deck.name}</h1>
+          <div class="header-name-and-due">
+            <h1>${this.deck.name}</h1>
+            ${this.dueCount > 0
+              ? html`<div class="due-count">${this.dueCount} due today</div>`
+              : html``}
+          </div>
         </div>
         <div class="actions">
-          ${this.dueCount > 0
-            ? html`<div class="due-count">${this.dueCount} due today</div>`
-            : html``}
           <button class="study-button" @click=${this.handleStudy} ?disabled=${this.dueCount === 0}>
             Study
           </button>
