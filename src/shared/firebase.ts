@@ -1,10 +1,5 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
-} from "firebase/auth";
+import { getAuth, GoogleAuthProvider, signInWithRedirect, getRedirectResult } from "firebase/auth";
 import { Cacheable } from "./cacheable";
 import {
   getFirestore,
@@ -27,7 +22,7 @@ export class CartarioFirebaseNotFoundError extends CartarioFirebaseError {}
 const cacheableApp = new Cacheable(() => {
   const firebaseConfig = {
     apiKey: "AIzaSyAQtOBk_eC1kdYXKWQOvvIw5pNn4W9cN0o",
-    authDomain: "cartario-d8414.firebaseapp.com",
+    authDomain: "konasov.space",
     projectId: "cartario-d8414",
     storageBucket: "cartario-d8414.firebasestorage.app",
     messagingSenderId: "913905705485",
@@ -87,16 +82,9 @@ export async function getFirestoreCollection(collectionName: string) {
   return snapshot.docs.map((doc) => doc.data());
 }
 
-export async function getDocuments(
-  collectionName: string,
-  whereClause: ReturnType<typeof where>,
-) {
+export async function getDocuments(collectionName: string, whereClause: ReturnType<typeof where>) {
   const db = await cacheableFirestoreDb.get();
-  const q = query(
-    collection(db, collectionName),
-    whereClause,
-    where("userId", "==", userId.get()),
-  );
+  const q = query(collection(db, collectionName), whereClause, where("userId", "==", userId.get()));
   const snapshot = await getDocs(q);
 
   return snapshot.docs.map((doc) => doc.data());
@@ -107,10 +95,7 @@ export async function findAndUpdateOrThrow(
   data: object,
   ...predicates: ReturnType<typeof where>[]
 ) {
-  const predicatesWithUserId = [
-    ...predicates,
-    where("userId", "==", userId.get()),
-  ];
+  const predicatesWithUserId = [...predicates, where("userId", "==", userId.get())];
 
   const db = await cacheableFirestoreDb.get();
   const q = query(collection(db, collectionName), ...predicatesWithUserId);
@@ -132,10 +117,7 @@ export async function insertDocument(collectionName: string, doc: object) {
   });
 }
 
-export async function deleteFirst(
-  collectionName: string,
-  whereClause: ReturnType<typeof where>,
-) {
+export async function deleteFirst(collectionName: string, whereClause: ReturnType<typeof where>) {
   const db = await cacheableFirestoreDb.get();
   const q = query(collection(db, collectionName), whereClause);
   const snapshot = await getDocs(q);
