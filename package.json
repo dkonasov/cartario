@@ -17,6 +17,7 @@
   "dependencies": {
     "@lit-labs/signals": "^0.3.0",
     "@lit/context": "^1.1.1",
+    "firebase": "^12.19.0",
     "lit": "^3.2.1"
   },
   "devDependencies": {

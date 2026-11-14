@@ -1,4 +1,3 @@
-import { LocalStorageDriver } from "@infrastructure/storage/local-storage-driver";
 import { LocalDeckRepository } from "@infrastructure/repositories/local-deck-repository";
 import { LocalCardRepository } from "@infrastructure/repositories/local-card-repository";
 import { MemoryStorageDriver } from "@infrastructure/storage/memory-storage-driver";
@@ -8,12 +7,13 @@ import { DeckService } from "@application/deck-service";
 import { CardService } from "@application/card-service";
 import { StudyService } from "@application/study-service";
 import { createAppRoot } from "@ui/app-root";
+import { FirebaseStorageDriver } from "@infrastructure/storage/firebase-storage-driver";
 
 function createStorageDriver() {
   // If localStorage is unavailable (disabled cookies/private mode/quota issues),
   // fall back to in-memory so the app remains usable.
   try {
-    return new LocalStorageDriver(window.localStorage);
+    return new FirebaseStorageDriver();
   } catch {
     return new MemoryStorageDriver();
   }

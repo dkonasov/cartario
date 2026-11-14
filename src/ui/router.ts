@@ -69,7 +69,7 @@ function parseRoute(hash: string): ParsedRoute {
 
   // Default: /
   return {
-    path: "/",
+    path,
     params: {},
   };
 }

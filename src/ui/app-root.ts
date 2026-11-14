@@ -7,6 +7,7 @@ import type { StudyService } from "@application/study-service";
 import { deckServiceContext, cardServiceContext, studyServiceContext } from "@ui/context";
 import { router } from "@ui/router";
 import "@ui/components/toolbar";
+import * as Firebase from "@shared/firebase";
 
 interface AppDeps {
   deckService: DeckService;
@@ -58,13 +59,14 @@ export class AppRoot extends LitElement {
     super.disconnectedCallback();
   }
 
-  private initializeDeps(): void {
+  private async initializeDeps(): Promise<void> {
     const deps = (globalThis as unknown as { __cartarioDeps?: AppDeps }).__cartarioDeps;
     if (!deps) return;
 
     this.deckServiceProvider.setValue(deps.deckService);
     this.cardServiceProvider.setValue(deps.cardService);
     this.studyServiceProvider.setValue(deps.studyService);
+    await Firebase.authWithGoogle();
     this.ready = true;
     this.requestUpdate();
   }
