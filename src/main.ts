@@ -29,4 +29,12 @@ const deckService = new DeckService(deckRepo, cardRepo);
 const cardService = new CardService(cardRepo);
 const studyService = new StudyService(cardRepo, scheduler, clock);
 
-createAppRoot({ deckService, cardService, studyService });
+const btn = document.createElement("button");
+btn.innerText = "Sign in";
+btn.type = "button";
+btn.addEventListener("click", () => {
+  document.body.removeChild(btn);
+  createAppRoot({ deckService, cardService, studyService });
+});
+
+document.body.appendChild(btn);
