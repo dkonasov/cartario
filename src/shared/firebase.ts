@@ -1,5 +1,10 @@
 import { FirebaseApp, initializeApp } from "firebase/app";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import {
+  getAuth,
+  GoogleAuthProvider,
+  signInWithRedirect,
+  getRedirectResult,
+} from "firebase/auth";
 import { Cacheable } from "./cacheable";
 import {
   getFirestore,
@@ -46,10 +51,19 @@ export async function initFirebase() {
 }
 
 export async function authWithGoogle() {
+  if (userId.get()) return;
   const app = await initFirebase();
   const auth = getAuth(app);
   const provider = new GoogleAuthProvider();
-  const result = await signInWithPopup(auth, provider);
+
+  const result = await getRedirectResult(auth);
+
+  if (!result) {
+    signInWithRedirect(auth, provider);
+
+    return;
+  }
+
   const credential = GoogleAuthProvider.credentialFromResult(result);
 
   if (!credential) {
@@ -63,22 +77,6 @@ export async function authWithGoogle() {
   return [user, token] as const;
 }
 
-export async function authorize() {
-  let seralizedUser = localStorage.getItem("user");
-  let token = localStorage.getItem("token");
-  if (!seralizedUser || !token) {
-    const authResult = await authWithGoogle();
-    const user = authResult[0];
-
-    localStorage.setItem("user", JSON.stringify(user));
-    localStorage.setItem("token", authResult[1]);
-
-    return [user, authResult[1]];
-  }
-
-  return [JSON.parse(seralizedUser), token];
-}
-
 export async function getFirestoreCollection(collectionName: string) {
   const db = await cacheableFirestoreDb.get();
   const whereClause = where("userId", "==", userId.get());
@@ -89,9 +87,16 @@ export async function getFirestoreCollection(collectionName: string) {
   return snapshot.docs.map((doc) => doc.data());
 }
 
-export async function getDocuments(collectionName: string, whereClause: ReturnType<typeof where>) {
+export async function getDocuments(
+  collectionName: string,
+  whereClause: ReturnType<typeof where>,
+) {
   const db = await cacheableFirestoreDb.get();
-  const q = query(collection(db, collectionName), whereClause, where("userId", "==", userId.get()));
+  const q = query(
+    collection(db, collectionName),
+    whereClause,
+    where("userId", "==", userId.get()),
+  );
   const snapshot = await getDocs(q);
 
   return snapshot.docs.map((doc) => doc.data());
@@ -102,7 +107,10 @@ export async function findAndUpdateOrThrow(
   data: object,
   ...predicates: ReturnType<typeof where>[]
 ) {
-  const predicatesWithUserId = [...predicates, where("userId", "==", userId.get())];
+  const predicatesWithUserId = [
+    ...predicates,
+    where("userId", "==", userId.get()),
+  ];
 
   const db = await cacheableFirestoreDb.get();
   const q = query(collection(db, collectionName), ...predicatesWithUserId);
@@ -124,7 +132,10 @@ export async function insertDocument(collectionName: string, doc: object) {
   });
 }
 
-export async function deleteFirst(collectionName: string, whereClause: ReturnType<typeof where>) {
+export async function deleteFirst(
+  collectionName: string,
+  whereClause: ReturnType<typeof where>,
+) {
   const db = await cacheableFirestoreDb.get();
   const q = query(collection(db, collectionName), whereClause);
   const snapshot = await getDocs(q);
