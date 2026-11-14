@@ -27,7 +27,7 @@ export class CartarioFirebaseNotFoundError extends CartarioFirebaseError {}
 const cacheableApp = new Cacheable(() => {
   const firebaseConfig = {
     apiKey: "AIzaSyAQtOBk_eC1kdYXKWQOvvIw5pNn4W9cN0o",
-    authDomain: "cartario-firebase.konasov.space",
+    authDomain: "cartario.konasov.space",
     projectId: "cartario-d8414",
     storageBucket: "cartario-d8414.firebasestorage.app",
     messagingSenderId: "913905705485",
